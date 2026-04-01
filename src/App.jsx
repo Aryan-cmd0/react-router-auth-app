@@ -11,7 +11,7 @@ import User from './components/User'
 import Layout from './components/Layout'
 import ProtectesRoute from './components/ProtectesRoute'
 import './App.css'
-
+import Posts from './pages/Posts'
 
 function App() {
   const router = createBrowserRouter([
@@ -35,7 +35,7 @@ function App() {
 
   return (
     <>
-
+      <Route path="/posts" element={<Posts />} />
       <RouterProvider router={router} />
     </>
   )

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { AppContext } from '../context/AppContext'
-
+import Posts from '../pages/Posts'
 const Navbar = () => {
   const navigate = useNavigate()
   const {user} = useContext(AppContext)
@@ -16,6 +16,7 @@ const Navbar = () => {
   return (
     <nav>
       <h3>User: {user}</h3>
+      <NavLink to="/posts">Posts</NavLink>
       <NavLink className={(e)=> e.isActive ? "red" : ""} to="/">Home</NavLink>
       <NavLink className={(e)=> e.isActive ? "red" : ""} to="/about">About</NavLink>
 
