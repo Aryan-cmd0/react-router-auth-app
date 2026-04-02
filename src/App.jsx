@@ -5,6 +5,7 @@
 import Navbar from './components/Navbar'
 import About from './components/About'
 import Login from './components/Login'
+// import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Home from './components/Home'
 import User from './components/User'
@@ -28,15 +29,19 @@ function App() {
               <User />
             </ProtectesRoute>
           )
+        },
+        {
+          path: "/posts",
+          element: <Posts />
         }
+
       ]
     }
   ])
 
   return (
     <>
-      <Route path="/posts" element={<Posts />} />
-      <RouterProvider router={router} />
+      <RouterProvider router={router} />;
     </>
   )
 }
