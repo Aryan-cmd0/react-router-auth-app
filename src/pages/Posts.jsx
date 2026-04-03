@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-
+import React, { useEffect, useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 const Posts = () => {
   const [posts, setPosts] = useState([]);
   const [search, setSearch] = useState("");
@@ -10,16 +10,17 @@ const Posts = () => {
       .then((data) => setPosts(data));
   }, []);
 
-  // 🔍 Filter logic
-  const filteredPosts = posts.filter((post) =>
-    post.title.toLowerCase().includes(search.toLowerCase())
-  );
+  // 🔥 useMemo optimization
+  const filteredPosts = useMemo(() => {
+    console.log("Filtering..."); // to see optimization
+    return posts.filter((post) =>
+      post.title.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [posts, search]);
 
   return (
     <div>
-      <h1>Posts</h1>
 
-      {/* 🔍 Search Input */}
       <input
         type="text"
         placeholder="Search posts..."
@@ -27,10 +28,12 @@ const Posts = () => {
         onChange={(e) => setSearch(e.target.value)}
       />
 
-      {/* 📄 Display Posts */}
       {filteredPosts.slice(0, 10).map((post) => (
         <div key={post.id}>
-          <h3>{post.title}</h3>
+          <h1>Posts</h1>
+          <Link to={`/posts/${post.id}`}>
+            <h3>{post.title}</h3>
+          </Link>
           <p>{post.body}</p>
           <hr />
         </div>

@@ -5,6 +5,7 @@
 import Navbar from './components/Navbar'
 import About from './components/About'
 import Login from './components/Login'
+import PostDetails from './pages/PostDetails'
 // import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Home from './components/Home'
@@ -33,6 +34,10 @@ function App() {
         {
           path: "/posts",
           element: <Posts />
+        },
+        {
+          path:"/posts/:id",
+          element:<PostDetails />
         }
 
       ]
