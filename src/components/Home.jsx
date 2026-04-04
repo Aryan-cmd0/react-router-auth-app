@@ -5,10 +5,13 @@ const Home = () => {
   const { setUser } = useContext(AppContext);
 
   return (
-    <div>
+    <div style={{
+      width:"60%",
+      margin:"20px auto"
+    }}>
       <h1>Home Page</h1>
       <button onClick={() => setUser("Aarya")}>
-        Login as Aarya
+        Login
       </button>
     </div>
   );

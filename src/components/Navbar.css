@@ -1,0 +1,31 @@
+.nav-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  text-decoration: none;
+  color: #374151;
+  background: #f3f4f6;
+  transition: all 0.2s ease;
+  margin: 0 5px;
+}
+
+/* Hover */
+.nav-btn:hover {
+  background: #e5e7eb;
+}
+
+/* Active page */
+.nav-btn.active {
+  background: #3b82f6;
+  color: white;
+}
+@media (max-width:900px) {
+    .post-container{
+        column-count: 2;
+    }
+}
+
+@media (max-width: 500px) {
+    .post-container{
+        column-count: 1;
+    }
+}
