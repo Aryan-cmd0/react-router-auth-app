@@ -8,25 +8,36 @@ const CreatePost = () => {
   const [body, setBody] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     const newPost = {
       id: Date.now(),
       title,
-      body
+      body,
     };
 
     setPosts([newPost, ...posts]); // add on top
     navigate("/posts");
+    const existingPosts = JSON.parse(localStorage.getItem("posts")) || [];
+
+    const updatedPosts = [newPost, ...existingPosts];
+
+    localStorage.setItem("posts", JSON.stringify(updatedPosts));
+
+    // redirect
+    navigate("/posts");
   };
 
   return (
-    <div style={{
-      width: "50%",
-      margin: "30px auto",
-      background: "#fff",
-      padding: "20px",
-      borderRadius: "10px"
-    }}>
+    <div
+      style={{
+        width: "50%",
+        margin: "30px auto",
+        background: "#fff",
+        padding: "20px",
+        borderRadius: "10px",
+      }}
+    >
       <h2>Create Post</h2>
 
       <input
@@ -36,7 +47,7 @@ const CreatePost = () => {
         style={{
           width: "100%",
           padding: "10px",
-          margin: "10px 0"
+          margin: "10px 0",
         }}
       />
 
@@ -48,13 +59,11 @@ const CreatePost = () => {
           width: "100%",
           height: "120px",
           padding: "10px",
-          margin: "10px 0"
+          margin: "10px 0",
         }}
       />
 
-      <button onClick={handleSubmit}>
-        Submit
-      </button>
+      <button onClick={handleSubmit}>Submit</button>
     </div>
   );
 };
