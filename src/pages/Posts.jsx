@@ -4,22 +4,21 @@ import { AppContext } from "../context/AppContext";
 import "./Posts.css";
 
 const Posts = () => {
-  const { posts, setPosts, search } = useContext(AppContext);
+  const { posts, search, setSearch,deletePost } = useContext(AppContext);
   const [loading, setLoading] = useState(true);
-  const colors = ["post-blue", "post-green", "post-yellow", "post-purple"];
 
-  useEffect(() => {
-    if (posts.length === 0) {
-      fetch("https://jsonplaceholder.typicode.com/posts")
-        .then((res) => res.json())
-        .then((data) => {
-          setPosts(data);
-          setLoading(false);
-        });
-    } else {
-      setLoading(false);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (posts.length === 0) {
+  //     fetch("https://jsonplaceholder.typicode.com/posts")
+  //       .then((res) => res.json())
+  //       .then((data) => {
+  //         setPosts(data);
+  //         setLoading(false);
+  //       });
+  //   } else {
+  //     setLoading(false);
+  //   }
+  // }, []);
 
   const filteredPosts = useMemo(() => {
     console.log("Filtering...");
@@ -103,16 +102,22 @@ const Posts = () => {
             boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
           }}
         >
+          <button
+            style={{
+              background: "red",
+              color: "white",
+              border: "none",
+              padding: "5px 10px",
+              borderRadius: "5px",
+              cursor: "pointer",
+            }}
+            onClick={() => deletePost(post.id)}
+          >Delete
+          </button>
           <Link to={`/posts/${post.id}`}>
-            <div className="posts-container">
-              {posts.map((post) => (
-                <div className="post-card" key={post.id}>
-                  <div className="post-content">
-                    <h3>{post.title}</h3>
-                    <p>{post.body}</p>
-                  </div>
-                </div>
-              ))}
+            <div className="post-card">
+              <h3>{post.title}</h3>
+              <p>{post.body}</p>
             </div>
           </Link>
         </div>

@@ -1,81 +1,65 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { AppContext } from "../context/AppContext";
 
 const PostDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { posts, deletePost } = useContext(AppContext);
 
-  const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
 
-  useEffect(() => {
-    fetch(`https://jsonplaceholder.typicode.com/posts/${id}`)
-      .then((res) => res.json())
-      .then((data) => setPost(data));
+  // ✅ Get post from your app
+  const post = posts.find((p) => p.id === Number(id));
 
+  // ✅ Only fetch comments
+  useEffect(() => {
     fetch(`https://jsonplaceholder.typicode.com/posts/${id}/comments`)
       .then((res) => res.json())
       .then((data) => setComments(data));
   }, [id]);
 
-  if (!post) return <h2>Loading...</h2>;
+  if (!post) return <h2>Post not found</h2>;
+
+  // ✅ Delete handler
+  const handleDelete = () => {
+    deletePost(post.id);
+    navigate("/posts");
+  };
 
   return (
-    <div
-      style={{
-        width: "60%",
-        margin: "30px auto",
-      }}
-    >
-      {/* Back Button */}
-      <button
-        onClick={() => navigate(-1)}
-        style={{
-          marginBottom: "20px",
-          padding: "8px 14px",
-          borderRadius: "6px",
-          border: "none",
-          background: "#e0e7ff",
-          cursor: "pointer",
-        }}
-      >
-        ⬅ Back
-      </button>
+    <div style={{ width: "60%", margin: "30px auto" }}>
+      
+      <button onClick={() => navigate(-1)}>⬅ Back</button>
 
-      {/* Post Card */}
-      <div
-        style={{
-          background: "#fff",
-          padding: "20px",
-          borderRadius: "10px",
-          boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-        }}
-      >
-        <h2 style={{ marginBottom: "10px" }}>{post.title}</h2>
-        <p style={{ color: "#444", lineHeight: "1.6" }}>{post.body}</p>
+      <div style={{ background: "#fff", padding: "20px", borderRadius: "10px" }}>
+        <h2>{post.title}</h2>
+        <p>{post.body}</p>
+
+        {/* ✅ DELETE BUTTON */}
+        <button
+          onClick={handleDelete}
+          style={{
+            marginTop: "15px",
+            background: "red",
+            color: "white",
+            border: "none",
+            padding: "8px 12px",
+            borderRadius: "6px",
+            cursor: "pointer",
+          }}
+        >
+          Delete Post
+        </button>
       </div>
 
-      {/* Comments Section */}
-      <div
-        style={{
-          marginTop: "30px",
-        }}
-      >
+      <div style={{ marginTop: "30px" }}>
         <h3>Comments</h3>
 
         {comments.map((comment) => (
-          <div
-            key={comment.id}
-            style={{
-              background: "#fff",
-              padding: "15px",
-              marginTop: "15px",
-              borderRadius: "8px",
-              boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-            }}
-          >
-            <h4 style={{ marginBottom: "5px" }}>{comment.name}</h4>
-            <p style={{ color: "#555" }}>{comment.body}</p>
+          <div key={comment.id}>
+            <h4>{comment.name}</h4>
+            <p>{comment.body}</p>
           </div>
         ))}
       </div>

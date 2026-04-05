@@ -16,16 +16,13 @@ const CreatePost = () => {
       body,
     };
 
-    setPosts([newPost, ...posts]); // add on top
-    navigate("/posts");
-    const existingPosts = JSON.parse(localStorage.getItem("posts")) || [];
-
-    const updatedPosts = [newPost, ...existingPosts];
-
+    const updatedPosts = [newPost, ...posts];
+    setPosts(updatedPosts); // add on top
     localStorage.setItem("posts", JSON.stringify(updatedPosts));
 
-    // redirect
-    navigate("/posts");
+    // redirect 
+    navigate("/posts"); //only posts
+
   };
 
   return (
