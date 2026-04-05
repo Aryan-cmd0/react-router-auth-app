@@ -7,17 +7,21 @@ export const AppProvider = ({ children }) => {
   const [search, setSearch] = useState("");
   const [posts, setPosts] = useState([]);
 
-  // ✅ Load posts from localStorage (ONLY ONCE)
+  // ✅ Load posts once
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("posts")) || [];
     setPosts(data);
   }, []);
 
-  // ✅ Delete post (clean)
+  // ✅ Sync posts to localStorage whenever posts change
+  useEffect(() => {
+    localStorage.setItem("posts", JSON.stringify(posts));
+  }, [posts]);
+
+  // ✅ Delete post
   const deletePost = (id) => {
     const updatedPosts = posts.filter((post) => post.id !== id);
     setPosts(updatedPosts);
-    localStorage.setItem("posts", JSON.stringify(updatedPosts));
   };
 
   return (

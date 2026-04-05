@@ -6,7 +6,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { user } = useContext(AppContext);
   const isLoggedIn = localStorage.getItem("isLoggedIn");
-  const [search, setSearch] = useState(AppContext);
+  const [search, setSearch] = useState("");
   const handleLogout = () => {
     localStorage.removeItem("isLoggedIn");
     alert("Logged out");
