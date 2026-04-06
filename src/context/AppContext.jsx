@@ -6,6 +6,7 @@ export const AppProvider = ({ children }) => {
   const [user, setUser] = useState("Guest");
   const [search, setSearch] = useState("");
   const [posts, setPosts] = useState([]);
+  const [darkMode, setDarkMode] = useState(false);
 
   // ✅ Load posts once
   useEffect(() => {
@@ -17,6 +18,15 @@ export const AppProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem("posts", JSON.stringify(posts));
   }, [posts]);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) setDarkMode(savedTheme === "dark");
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("theme", darkMode ? "dark" : "light");
+  }, [darkMode]);
 
   // ✅ Delete post
   const deletePost = (id) => {
@@ -34,6 +44,8 @@ export const AppProvider = ({ children }) => {
         posts,
         setPosts,
         deletePost,
+        darkMode,
+        setDarkMode,
       }}
     >
       {children}

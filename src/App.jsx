@@ -15,8 +15,11 @@ import ProtectesRoute from "./components/ProtectesRoute";
 import "./App.css";
 import Posts from "./pages/Posts";
 import CreatePost from "./pages/CreatePost";
+import { AppContext } from "./context/AppContext";
+import { useContext } from "react";
 
 function App() {
+  const { darkMode } = useContext(AppContext);
   const router = createBrowserRouter([
     {
       path: "/",

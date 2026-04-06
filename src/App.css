@@ -1,3 +1,16 @@
+body{
+  margin: 0;
+  padding: 0;
+}
+html, body{
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+#root {
+  min-height: 100vh;
+} 
+
 @media (max-width: 1100px) {
   .home-grid {
     column-count: 3;
@@ -92,4 +105,43 @@
 
 .explore-btn:hover {
   background: #ad081b;
+}
+.app {
+  background-color: white;
+  color: black;
+  min-height: 100vh;
+  transition: 0.3s;
+}
+
+.app.dark {
+  background-color: #222323; /*changes the dark mode color */
+  color: #b6ad90;
+}
+
+/* Cards / Posts */
+.card {
+  background-color: #ffffff;
+  color: black;
+  transition: 0.3s;
+  padding: 15px;
+  border-radius: 16px;
+}
+
+/* DARK MODE FIX */
+.app.dark .card {
+  background-color: transparent; /* dark card */
+  /* border: 1px solid #2a2a2a; */
+  /* color: white; */
+}
+.app.dark .posts-container{
+  background-color: #121212;
+}
+
+/* Navbar */
+nav {
+  background-color: #f5f5f5;
+}
+
+.app.dark nav {
+  background-color: #1a1a1a;
 }

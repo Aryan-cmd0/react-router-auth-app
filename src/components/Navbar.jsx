@@ -1,12 +1,14 @@
-import React, { useContext,useState } from "react";
+import React, { useContext, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import "./Navbar.css"
+import "./Navbar.css";
 import { AppContext } from "../context/AppContext";
+
 const Navbar = () => {
   const navigate = useNavigate();
-  const { user } = useContext(AppContext);
+  const { user, darkMode, setDarkMode } = useContext(AppContext);
   const isLoggedIn = localStorage.getItem("isLoggedIn");
   const [search, setSearch] = useState("");
+
   const handleLogout = () => {
     localStorage.removeItem("isLoggedIn");
     alert("Logged out");
@@ -20,7 +22,7 @@ const Navbar = () => {
         justifyContent: "space-between",
         alignItems: "center",
         padding: "12px 20px",
-        background: "#ffffff",
+        background: "inherit",
         borderBottom: "1px solid #e5e5e5",
       }}
     >
@@ -48,6 +50,7 @@ const Navbar = () => {
           border: "1px solid #ccc",
         }}
       />
+
       <button
         onClick={() => navigate("/create")}
         style={{
@@ -61,6 +64,7 @@ const Navbar = () => {
       >
         Create Post
       </button>
+
       {/* RIGHT */}
       <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
         <NavLink to="/posts" className="nav-btn">Posts</NavLink>
@@ -85,18 +89,40 @@ const Navbar = () => {
           </button>
         )}
 
+        {/* ✅ Dark/Light Mode Toggle with SVG icons */}
         <button
+          onClick={() => setDarkMode(!darkMode)}
           style={{
-            padding: "6px 12px",
-            background: "#4f46e5",
-            color: "#fff",
+            background: "transparent",
             border: "none",
-            borderRadius: "6px",
             cursor: "pointer",
+            padding: "6px",
+            borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            transition: "background 0.2s",
           }}
+          title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
         >
-          Create Post
+          {darkMode ? (
+            // ☀️ Sun icon — shown in dark mode to switch to light
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+              viewBox="0 0 24 24" fill="none" stroke="#facc15"
+              strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="4"/>
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+            </svg>
+          ) : (
+            // 🌙 Moon icon — shown in light mode to switch to dark
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+              viewBox="0 0 24 24" fill="none" stroke="#4f46e5"
+              strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+          )}
         </button>
+
       </div>
     </nav>
   );
