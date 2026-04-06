@@ -85,6 +85,32 @@
   transition: transform 0.2s ease;
 }
 
+/* ❤️ Like button — bottom left of card */
+.like-btn {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background: white;
+  border: none;
+  border-radius: 20px;
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  z-index: 10;
+  color: #ef4444;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.like-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
 /* Renamed to avoid clash with .post-title (absolute overlay style) */
 .post-title-text {
   font-size: 16px;

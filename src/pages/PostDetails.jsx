@@ -47,6 +47,7 @@ const PostDetails = () => {
             <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
           </svg>
         </button>
+        
 
         <h2>{post.title}</h2>
         <p>{post.body}</p>

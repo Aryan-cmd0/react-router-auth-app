@@ -29,7 +29,7 @@ const CreatePost = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!title.trim()) return;
-    const newPost = { id: Date.now(), title, body, image: imagePreview };
+    const newPost = { id: Date.now(), title, body, image: imagePreview, likes:0, liked: false };
     const updatedPosts = [newPost, ...posts];
     setPosts(updatedPosts);
     localStorage.setItem("posts", JSON.stringify(updatedPosts));
