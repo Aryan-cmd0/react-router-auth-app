@@ -1,13 +1,12 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 import { AppContext } from "../context/AppContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { user, darkMode, setDarkMode } = useContext(AppContext);
   const isLoggedIn = localStorage.getItem("isLoggedIn");
-  const [search, setSearch] = useState("");
+  const { darkMode, setDarkMode, search, setSearch } = useContext(AppContext);
 
   const handleLogout = () => {
     localStorage.removeItem("isLoggedIn");
@@ -34,7 +33,7 @@ const Navbar = () => {
         >
           DevConnect
         </h2>
-        <span style={{ fontSize: "14px" }}>User: {user}</span>
+        {/* <span style={{ fontSize: "14px" }}>User: {user}</span> */}
       </div>
 
       {/* CENTER */}
