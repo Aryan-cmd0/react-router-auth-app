@@ -5,16 +5,26 @@ export const AppContext = createContext();
 export const AppProvider = ({ children }) => {
   const [user, setUser] = useState("Guest");
   const [search, setSearch] = useState("");
-  const [posts, setPosts] = useState([]);
   const [darkMode, setDarkMode] = useState(false);
+  const [posts, setPosts] = useState([]);
 
-  // ✅ Load posts once
+  const addComment = (postId, commentText) => {
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post.id === postId
+          ? { ...post, comments: [...(post.comments || []), commentText] }
+          : post
+      )
+    );
+  };
+
+  // Load posts once
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("posts")) || [];
     setPosts(data);
   }, []);
 
-  // ✅ Sync posts to localStorage whenever posts change
+  // Sync posts to localStorage
   useEffect(() => {
     localStorage.setItem("posts", JSON.stringify(posts));
   }, [posts]);
@@ -28,10 +38,8 @@ export const AppProvider = ({ children }) => {
     localStorage.setItem("theme", darkMode ? "dark" : "light");
   }, [darkMode]);
 
-  // ✅ Delete post
   const deletePost = (id) => {
-    const updatedPosts = posts.filter((post) => post.id !== id);
-    setPosts(updatedPosts);
+    setPosts((prev) => prev.filter((post) => post.id !== id));
   };
 
   return (
@@ -46,6 +54,7 @@ export const AppProvider = ({ children }) => {
         deletePost,
         darkMode,
         setDarkMode,
+        addComment,
       }}
     >
       {children}
