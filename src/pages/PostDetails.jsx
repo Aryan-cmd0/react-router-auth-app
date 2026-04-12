@@ -3,28 +3,50 @@ import { useParams, useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import "./PostDetail.css";
 
-const PostDetails = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const { posts, deletePost, darkMode, setPosts } = useContext(AppContext); // ✅ ADDED setPosts
-  const [comments, setComments] = useState([]);
-  const [loaded, setLoaded] = useState(false);
+const TAG_STYLES = [
+  { bg: "rgba(83,74,183,0.15)",  color: "#AFA9EC", border: "rgba(83,74,183,0.3)"  },
+  { bg: "rgba(29,158,117,0.12)", color: "#5DCAA5", border: "rgba(29,158,117,0.3)" },
+  { bg: "rgba(216,90,48,0.12)",  color: "#F0997B", border: "rgba(216,90,48,0.3)"  },
+  { bg: "rgba(55,138,221,0.12)", color: "#85B7EB", border: "rgba(55,138,221,0.3)" },
+  { bg: "rgba(212,83,126,0.12)", color: "#ED93B1", border: "rgba(212,83,126,0.3)" },
+];
+const TAGS = ["React", "Backend", "AI / ML", "DevOps", "Open Source"];
 
-  const post = posts.find((p) => p.id === Number(id));
+const PostDetails = () => {
+  const { id }       = useParams();
+  const navigate     = useNavigate();
+  const { posts, deletePost, setPosts } = useContext(AppContext);
+
+  const [apiComments, setApiComments] = useState([]);
+  const [loaded, setLoaded]           = useState(false);
+  const [newComment, setNewComment]   = useState("");
+  const [activeTab, setActiveTab]     = useState("post");
+
+  const post      = posts.find((p) => p.id === Number(id));
+  const postIndex = posts.findIndex((p) => p.id === Number(id));
+  const ts        = TAG_STYLES[postIndex % TAG_STYLES.length];
+  const tag       = TAGS[postIndex % TAGS.length];
+  const initials  = post?.title?.slice(0, 2).toUpperCase() || "??";
+  const wordCount = post?.body?.split(/\s+/).length || 0;
+  const readTime  = Math.max(1, Math.ceil(wordCount / 200));
 
   useEffect(() => {
     fetch(`https://jsonplaceholder.typicode.com/posts/${id}/comments`)
-      .then((res) => res.json())
+      .then((r) => r.json())
       .then((data) => {
-        setComments(data);
-        setTimeout(() => setLoaded(true), 100);
-      });
+        setApiComments(data);
+        setTimeout(() => setLoaded(true), 80);
+      })
+      .catch(() => setLoaded(true));
   }, [id]);
 
   if (!post) return (
-    <div style={{ textAlign: "center", marginTop: "80px", color: "#9ca3af", fontFamily: "Georgia, serif" }}>
-      <p style={{ fontSize: "48px" }}>404</p>
-      <p>Post not found</p>
+    <div className="pd-not-found">
+      <span className="pd-404">404</span>
+      <p>Post not found.</p>
+      <button className="pd-back pd-back-plain" onClick={() => navigate("/posts")}>
+        ← Back to feed
+      </button>
     </div>
   );
 
@@ -33,30 +55,41 @@ const PostDetails = () => {
     navigate("/posts");
   };
 
-  // ✅ ADDED — like toggle handler
   const handleLike = () => {
-    setPosts((prevPosts) =>
-      prevPosts.map((p) =>
-        p.id === post.id
-          ? { ...p, likes: p.liked ? (p.likes || 1) - 1 : (p.likes || 0) + 1, liked: !p.liked }
-          : p
-      )
-    );
+    setPosts((prev) => prev.map((p) =>
+      p.id === post.id
+        ? { ...p, likes: p.liked ? (p.likes || 1) - 1 : (p.likes || 0) + 1, liked: !p.liked }
+        : p
+    ));
   };
 
-  const dark = darkMode;
+  const handleComment = (e) => {
+    e.preventDefault();
+    if (!newComment.trim()) return;
+    setApiComments((prev) => [{
+      id: Date.now(),
+      name: "You",
+      email: "you@devpulse.io",
+      body: newComment.trim(),
+    }, ...prev]);
+    setNewComment("");
+  };
+
+  const allComments = [
+    ...(post.comments?.map((c, i) => ({
+      id: `local-${i}`, name: "Community", email: "user@devpulse.io", body: c,
+    })) || []),
+    ...apiComments,
+  ];
 
   return (
-    <div className={`pd-page ${loaded ? "pd-loaded" : ""}`} style={{
-      minHeight: "100vh",
-      background: dark ? "#0d0d0d" : "#f5f3ee",
-      paddingBottom: "80px",
-    }}>
+    <div className={`pd-page ${loaded ? "pd-loaded" : ""}`}>
 
-      <button className="pd-back" onClick={() => navigate(-1)} style={{ color: dark ? "#ccc" : "#333" }}>
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-          viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      {/* BACK */}
+      <button className="pd-back" onClick={() => navigate(-1)}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" strokeWidth="2"
+          strokeLinecap="round" strokeLinejoin="round">
           <path d="M6 8L2 12L6 16"/><path d="M2 12H22"/>
         </svg>
         <span>Back</span>
@@ -64,42 +97,63 @@ const PostDetails = () => {
 
       <div className="pd-wrapper">
 
-        {post.image && (
-          <div className="pd-hero">
+        {/* HERO */}
+        <div className="pd-hero">
+          {post.image ? (
             <img src={post.image} alt={post.title} className="pd-hero-img" />
-            <div className="pd-hero-overlay" />
-          </div>
-        )}
-
-        <div className="pd-card" style={{
-          background: dark ? "rgba(255,255,255,0.04)" : "#fff",
-          border: dark ? "1px solid rgba(255,255,255,0.07)" : "1px solid #e8e3dc",
-          color: dark ? "#f0ece4" : "#1a1a1a",
-        }}>
-
-          <div className="pd-meta">
-            <span className="pd-tag" style={{
-              background: dark ? "rgba(79,70,229,0.2)" : "#eef2ff",
-              color: "#4f46e5",
-            }}>
-              Post #{post.id}
+          ) : (
+            <div className="pd-hero-placeholder">
+              <span className="pd-hero-letter">{initials}</span>
+            </div>
+          )}
+          <div className="pd-hero-overlay" />
+          <div className="pd-hero-badges">
+            <span
+              className="pd-tag"
+              style={{ background: ts.bg, color: ts.color, border: `0.5px solid ${ts.border}` }}
+            >
+              {tag}
             </span>
+            <span className="pd-index-badge">
+              #{String(postIndex + 1).padStart(2, "0")}
+            </span>
+          </div>
+        </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        {/* MAIN CARD */}
+        <div className="pd-card">
 
-              {/* ✅ ADDED — Like button */}
-              <button
-                onClick={handleLike}
-                className={`pd-like-btn ${post.liked ? "pd-liked" : ""}`}
-                style={{
-                  background: post.liked
-                    ? "#ef4444"
-                    : dark ? "rgba(255,255,255,0.07)" : "#f3f4f6",
-                  color: post.liked ? "white" : dark ? "#ccc" : "#555",
-                }}
+          {/* META ROW */}
+          <div className="pd-meta">
+            <div className="pd-author-chip">
+              <div
+                className="pd-avatar-sm"
+                style={{ background: ts.bg, color: ts.color }}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                  viewBox="0 0 24 24"
+                {initials}
+              </div>
+              <div>
+                <div className="pd-author-name">@user</div>
+                <div className="pd-author-sub">Author</div>
+              </div>
+            </div>
+
+            <div className="pd-meta-center">
+              <span className="pd-meta-item">{readTime} min read</span>
+              <span className="pd-meta-dot" />
+              <span className="pd-meta-item">{wordCount} words</span>
+              <span className="pd-meta-dot" />
+              <span className="pd-meta-item">
+                POST #{String(post.id).slice(-6).toUpperCase()}
+              </span>
+            </div>
+
+            <div className="pd-meta-actions">
+              <button
+                className={`pd-like-btn ${post.liked ? "pd-liked" : ""}`}
+                onClick={handleLike}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24"
                   fill={post.liked ? "currentColor" : "none"}
                   stroke="currentColor" strokeWidth="2"
                   strokeLinecap="round" strokeLinejoin="round">
@@ -108,71 +162,133 @@ const PostDetails = () => {
                 <span>{post.likes || 0}</span>
               </button>
 
-              <button onClick={handleDelete} className="pd-delete">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                  viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                  strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
-                  <path d="M3 6h18"/>
-                  <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+              <button className="pd-delete" onClick={handleDelete}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" strokeWidth="2.5"
+                  strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/>
                 </svg>
                 Delete
               </button>
             </div>
           </div>
 
+          {/* TITLE */}
           <h1 className="pd-title">{post.title}</h1>
+          <div className="pd-divider" />
 
-          <div className="pd-divider" style={{
-            background: dark ? "rgba(255,255,255,0.08)" : "#e8e3dc",
-          }} />
-
-          <p className="pd-body" style={{ color: dark ? "#b0aaa0" : "#4b4540" }}>
-            {post.body}
-          </p>
-        </div>
-
-        <div className="pd-comments-section">
-          <div className="pd-comments-header">
-            <h3 style={{ color: dark ? "#f0ece4" : "#1a1a1a" }}>Comments</h3>
-            <span className="pd-comment-count" style={{
-              background: dark ? "rgba(255,255,255,0.08)" : "#eef2ff",
-              color: dark ? "#aaa" : "#4f46e5",
-            }}>
-              {comments.length}
-            </span>
+          {/* TABS */}
+          <div className="pd-tabs">
+            <button
+              className={`pd-tab ${activeTab === "post" ? "pd-tab-active" : ""}`}
+              onClick={() => setActiveTab("post")}
+            >
+              Post
+            </button>
+            <button
+              className={`pd-tab ${activeTab === "comments" ? "pd-tab-active" : ""}`}
+              onClick={() => setActiveTab("comments")}
+            >
+              Comments
+              <span className="pd-tab-count">{allComments.length}</span>
+            </button>
           </div>
 
-          <div className="pd-comments-list">
-            {comments.map((comment, i) => (
-              <div key={comment.id} className="pd-comment"
-                style={{
-                  background: dark ? "rgba(255,255,255,0.03)" : "#faf9f6",
-                  border: dark ? "1px solid rgba(255,255,255,0.06)" : "1px solid #ede9e2",
-                  animationDelay: `${i * 0.05}s`,
-                }}
-              >
-                <div className="pd-avatar" style={{
-                  background: `hsl(${(comment.id * 47) % 360}, 60%, ${dark ? "35%" : "75%"})`,
-                }}>
-                  {comment.name.charAt(0).toUpperCase()}
+          {/* POST BODY */}
+          {activeTab === "post" && (
+            <div className="pd-body">
+              {post.body?.split("\n").map((para, i) =>
+                para.trim()
+                  ? <p key={i} className="pd-para">{para}</p>
+                  : <br key={i} />
+              )}
+            </div>
+          )}
+
+          {/* COMMENTS TAB */}
+          {activeTab === "comments" && (
+            <div className="pd-comments-section">
+
+              {/* Comment input */}
+              <div className="pd-comment-box">
+                <div
+                  className="pd-avatar"
+                  style={{ background: "#EEEDFE", color: "#534AB7" }}
+                >
+                  ME
                 </div>
-                <div className="pd-comment-content">
-                  <div className="pd-comment-name" style={{ color: dark ? "#e0dbd2" : "#1a1a1a" }}>
-                    {comment.name}
+                <div className="pd-comment-input-inner">
+                  <textarea
+                    className="pd-textarea"
+                    placeholder="Share your thoughts on this post…"
+                    value={newComment}
+                    rows={3}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) handleComment(e);
+                    }}
+                  />
+                  <div className="pd-comment-footer-row">
+                    <span className="pd-comment-hint">Enter to post · Shift+Enter new line</span>
+                    <button
+                      className="pd-post-btn"
+                      onClick={handleComment}
+                      disabled={!newComment.trim()}
+                      style={{ opacity: newComment.trim() ? 1 : 0.4 }}
+                    >
+                      Post comment
+                    </button>
                   </div>
-                  <div className="pd-comment-email" style={{ color: "#9ca3af" }}>
-                    {comment.email}
-                  </div>
-                  <p className="pd-comment-body" style={{ color: dark ? "#9a9490" : "#5a5550" }}>
-                    {comment.body}
-                  </p>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
 
+              {/* Comments header */}
+              <div className="pd-comments-header">
+                <h3>Comments</h3>
+                <span className="pd-comment-count">{allComments.length}</span>
+              </div>
+
+              {/* Comments list */}
+              <div className="pd-comments-list">
+                {allComments.length === 0 ? (
+                  <div className="pd-no-comments">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" strokeWidth="1"
+                      strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <p>No comments yet — start the conversation.</p>
+                  </div>
+                ) : (
+                  allComments.map((c, i) => (
+                    <div
+                      key={c.id}
+                      className="pd-comment"
+                      style={{ animationDelay: `${i * 40}ms` }}
+                    >
+                      <div
+                        className="pd-avatar"
+                        style={{
+                          background: TAG_STYLES[i % TAG_STYLES.length].bg,
+                          color:      TAG_STYLES[i % TAG_STYLES.length].color,
+                        }}
+                      >
+                        {c.name.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="pd-comment-content">
+                        <div className="pd-comment-name">{c.name}</div>
+                        <div className="pd-comment-email">{c.email}</div>
+                        <p className="pd-comment-body">{c.body}</p>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+
+        </div>
       </div>
     </div>
   );

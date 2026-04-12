@@ -420,4 +420,4 @@ const styles = {
   },
 };
 
-export default PostDetail;
+export default PostDetail; 
