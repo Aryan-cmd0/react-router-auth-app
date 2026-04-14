@@ -16,9 +16,7 @@ const Navbar = () => {
   const [notifOpen, setNotifOpen] = useState(false);
   const dropdownRef = useRef(null);
   
-  if (location.pathname === "/login" || location.pathname === "/register") {
-    return null; // 🚀 hides entire navbar
-  }
+ 
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -61,6 +59,9 @@ const Navbar = () => {
     alert("Logged out");
     navigate("/login");
   };
+   if (location.pathname === "/login" || location.pathname === "/register") {
+    return null; // 🚀 hides entire navbar
+  }
 
   return (
     <>
