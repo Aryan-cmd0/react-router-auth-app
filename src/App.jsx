@@ -1,25 +1,28 @@
-// import { useState } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from './assets/vite.svg'
-// import heroImg from './assets/hero.png'
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { useContext } from "react";
+import { AppContext } from "./context/AppContext";
+import "./App.css";
+
+// Layout & Route Guards
+import Layout from "./components/Layout";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+// Components
 import Navbar from "./components/Navbar";
 import About from "./components/About";
 import Login from "./components/Login";
-import PostDetails from "./pages/PostDetails";
-// import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./components/Home";
 import User from "./components/User";
-import Layout from "./components/Layout";
-import ProtectesRoute from "./components/ProtectesRoute";
-import "./App.css";
+
+// Pages
 import Posts from "./pages/Posts";
+import PostDetails from "./pages/PostDetails";
 import CreatePost from "./pages/CreatePost";
-import { AppContext } from "./context/AppContext";
-import { useContext } from "react";
+import Bookmarks from "./pages/bookmarks";
 
 function App() {
   const { darkMode } = useContext(AppContext);
+
   const router = createBrowserRouter([
     {
       path: "/",
@@ -31,9 +34,9 @@ function App() {
         {
           path: "/user/:username",
           element: (
-            <ProtectesRoute>
+            <ProtectedRoute>
               <User />
-            </ProtectesRoute>
+            </ProtectedRoute>
           ),
         },
         {
@@ -47,6 +50,14 @@ function App() {
         {
           path: "/create",
           element: <CreatePost />,
+        },
+        {
+          path: "/bookmarks",
+          element: (
+            <ProtectedRoute>
+              <Bookmarks />
+            </ProtectedRoute>
+          ),
         },
       ],
     },

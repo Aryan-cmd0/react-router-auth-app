@@ -18,6 +18,13 @@ export const AppProvider = ({ children }) => {
     );
   };
 
+  // ✅ NEW: logout function
+  const logoutUser = () => {
+    localStorage.removeItem("token");
+    setUser("Guest");
+    window.location.href = "/login"; // optional redirect
+  };
+
   // Load posts once
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("posts")) || [];
@@ -29,11 +36,13 @@ export const AppProvider = ({ children }) => {
     localStorage.setItem("posts", JSON.stringify(posts));
   }, [posts]);
 
+  // Load theme
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) setDarkMode(savedTheme === "dark");
   }, []);
 
+  // Save theme
   useEffect(() => {
     localStorage.setItem("theme", darkMode ? "dark" : "light");
   }, [darkMode]);
@@ -55,6 +64,7 @@ export const AppProvider = ({ children }) => {
         darkMode,
         setDarkMode,
         addComment,
+        logoutUser, // ✅ ADDED HERE
       }}
     >
       {children}

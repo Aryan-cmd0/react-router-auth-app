@@ -2,6 +2,7 @@ import React, { useState, useMemo, useContext } from "react";
 import { Link } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import "./Posts.css";
+import { toggleBookmark } from "../services/bookmarkService";
 
 const TAGS = ["React", "Backend", "AI / ML", "DevOps", "Open Source", "CSS", "TypeScript", "System Design"];
 const TAG_STYLES = [
