@@ -1,19 +1,33 @@
+import axios from "axios";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    if (!email || !password) return;
-    setLoading(true);
-    setTimeout(() => {
-      localStorage.setItem("isLoggedIn", JSON.stringify(true));
-      navigate("/");
-    }, 600);
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/login", {
+        email,
+        password,
+      });
+
+      console.log("LOGIN SUCCESS:", res.data);
+
+      // store token
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+
+      alert("Login Successful ✅");
+    } catch (err) {
+      console.log(err.response?.data || err.message);
+      alert("Login Failed ❌");
+    }
   };
 
   return (

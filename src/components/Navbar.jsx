@@ -4,7 +4,7 @@ import "./Navbar.css";
 import { AppContext } from "../context/AppContext";
 import { AuthContext } from "../context/authContext";
 import { useLocation } from "react-router-dom";
-import { getNotifications, markAsRead } from "../services/notification";
+// import { getNotifications, markAsRead } from "../services/notification";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -18,17 +18,17 @@ const Navbar = () => {
   
  
 
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const res = await getNotifications();
-        setNotifications(res.data);
-      } catch (err) {
-        console.error("Failed to fetch notifications:", err);
-      }
-    };
-    fetchNotifications();
-  }, []);
+  // useEffect(() => {
+  //   const fetchNotifications = async () => {
+  //     try {
+  //       const res = await getNotifications();
+  //       setNotifications(res.data);
+  //     } catch (err) {
+  //       console.error("Failed to fetch notifications:", err);
+  //     }
+  //   };
+  //   fetchNotifications();
+  // }, []);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -42,16 +42,16 @@ const Navbar = () => {
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  const handleRead = async (id) => {
-    try {
-      await markAsRead(id);
-      setNotifications((prev) =>
-        prev.map((n) => (n._id === id ? { ...n, read: true } : n)),
-      );
-    } catch (err) {
-      console.error("Failed to mark as read:", err);
-    }
-  };
+  // const handleRead = async (id) => {
+  //   try {
+  //     await markAsRead(id);
+  //     setNotifications((prev) =>
+  //       prev.map((n) => (n._id === id ? { ...n, read: true } : n)),
+  //     );
+  //   } catch (err) {
+  //     console.error("Failed to mark as read:", err);
+  //   }
+  // };
 
   const handleLogout = () => {
     localStorage.removeItem("isLoggedIn");

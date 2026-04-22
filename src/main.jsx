@@ -1,15 +1,16 @@
-import { StrictMode } from 'react'
-import React from 'react'
+import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
-import { AppProvider } from './context/AppContext.jsx'
+import App from "./App.jsx";
+import { AppContext } from "./context/AppContext";
 
-createRoot(document.getElementById('root')).render(
-  // <StrictMode>
-    <AppProvider>
+function Root() {
+  const [darkMode, setDarkMode] = useState(false);
+
+  return (
+    <AppContext.Provider value={{ darkMode, setDarkMode, posts: [] }}>
       <App />
-    </AppProvider>
-  // {/* </StrictMode>, */}
-)
+    </AppContext.Provider>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<Root />);
